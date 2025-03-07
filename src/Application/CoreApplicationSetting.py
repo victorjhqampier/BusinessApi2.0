@@ -1,14 +1,14 @@
 from Application.Interfaces.IAuthServerCoreApplication import IAuthServerCoreApplication
 from Application.Interfaces.IClientNiubizCaseApplication import IClientNiubizCaseApplication
 from Application.Interfaces.ILoggerCoreApplication import ILoggerCoreApplication
-from Application.Usecases.AuthorizationCase.AuthServerUsecase import AuthServerUsecase
-from Application.Usecases.LoggerCase.LogUsecase import LogUsecase
+from Application.Usecases.InternalCoreCase.AuthServerUsecase import AuthServerUsecase
+from Application.Usecases.InternalCoreCase.LogUsecase import LogUsecase
 from Application.Usecases.NiubizCase.ClientNiubizCase import ClientNiubizCase
 from Domain.Commons.DependencyContainer import register_dependency
 from Infrastructure.CoreInfrastructureSetting import CoreInfrastructureSetting
 
 # ********************************************************************************************************          
-# * Copyright © 2024 Victor Jhampier Caxi - All rights reserved.   
+# * Copyright © 2025 Arify Labs - All rights reserved.   
 # * 
 # * Info                  : Dependency injection Handler.
 # *

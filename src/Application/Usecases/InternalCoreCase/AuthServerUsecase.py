@@ -8,7 +8,7 @@ from Domain.Interfaces.IAuthServerInfrastructure import IAuthServerInfrastructur
 from Domain.Messages.InternalCoreMessage import InternalCoreMessage
 
 # ********************************************************************************************************          
-# * Copyright © 2024 Victor Jhampier Caxi - All rights reserved.   
+# * Copyright © 2025 Arify Labs - All rights reserved.   
 # * 
 # * Info                  : Build a http request Handler.
 # *

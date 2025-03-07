@@ -4,12 +4,13 @@ from Domain.Entities.Client.ClientResponseEntity import ClientResponseEntity
 from Application.Adpaters.GlobalErrorCoreAdapter import GlobalErrorCoreAdapter
 from Application.Interfaces.IAuthServerCoreApplication import IAuthServerCoreApplication
 from Domain.Commons.DependencyContainer import get_dependency
+from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
 from Infrastructure.ClaPagosInfrastrucuture.ClaPagosSetting import ClaPagosSetting
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 
 class ClientCommand (IClientInfrastructure):    
     def __init__(self) -> None:
-        self.__builder_api_client:IHttpClientCoreApplication = get_dependency(IHttpClientCoreApplication)
+        self.__builder_api_client:IHttpClientInfrastructure = get_dependency(IHttpClientInfrastructure)
         self.__cognito_token : IAuthServerCoreApplication = get_dependency(IAuthServerCoreApplication)
     
     async def get_client(self,CustomerCardIdentifier:int, CustomerCardNumber:str) -> ClientResponseEntity:

@@ -1,13 +1,11 @@
 from Domain.Commons.DependencyContainer import register_dependency
-from Domain.Interfaces.IAuthServerInfrastructure import IAuthServerInfrastructure
-from Domain.Interfaces.IClientInfrastructure import IClientInfrastructure
-from Domain.Interfaces.ILoggerInfraestructure import ILoggerInfraestructure
-from Infrastructure.AuthServerInfrastructure.Commands.CognitoAutorizationCognito import CognitoAutorizationCognito
-from Infrastructure.ClaPagosInfrastrucuture.Commands.ClientCommand import ClientCommand
-from Infrastructure.CoreDatabaseInfrastructure.Commands.LoggerCommand import LoggerCommand
+from Domain.Interfaces.IFakeApiInfrastructure import IFakeApiInfrastructure
+from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
+from Infrastructure.ExampleFakeApiInfra.Queries.FakeApiCommand import FakeApiCommand
+from Infrastructure.HttpClientInfrastrucuture.HttpClientInfrastructure import HttpClientInfrastructure
 
 # ********************************************************************************************************          
-# * Copyright © 2024 Victor Jhampier Caxi - All rights reserved.   
+# * Copyright © 2025 Arify Labs - All rights reserved.   
 # * 
 # * Info                  : Dependency injection Handler.
 # *
@@ -20,6 +18,7 @@ from Infrastructure.CoreDatabaseInfrastructure.Commands.LoggerCommand import Log
 
 class CoreInfrastructureSetting:
     def __init__(self) -> None:        
-        register_dependency(ILoggerInfraestructure, LoggerCommand)
-        register_dependency(IClientInfrastructure, ClientCommand)
-        register_dependency(IAuthServerInfrastructure, CognitoAutorizationCognito)
+        # register_dependency(ILoggerInfraestructure, LoggerCommand)
+        register_dependency(IHttpClientInfrastructure, HttpClientInfrastructure)
+        register_dependency(IFakeApiInfrastructure, FakeApiCommand)
+        # register_dependency(IAuthServerInfrastructure, CognitoAutorizationCognito)
