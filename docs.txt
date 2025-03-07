@@ -1,0 +1,23 @@
+# Go to src/
+python -m venv env
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+env/Scripts/activate.ps1
+python -m pip install --upgrade pip
+
+#Generate o install
+#pip freeze > requirements.txt
+pip install -r requirements.txt
+uvicorn Presentation.app:app --reload
+
+
+----------or---------------
+Execute 
+> .\start.ps1 in Windows
+
+#Check JWT implementation in:
+https://www.youtube.com/watch?v=uNl8nlnBVMc
+
+
+------------------ Actulizar paquetes Ojo: caso inicial ---
+pip install --upgrade --upgrade-strategy eager -r requirements.txt
+
