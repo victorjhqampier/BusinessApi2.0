@@ -2,7 +2,9 @@ from Application.Adpaters.ExampleAdapters.CreateExampleAdapter import CreateExam
 from Application.Adpaters.ExampleAdapters.ExampleRequestAdaper import ExampleRequestAdaper
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
 from Application.Usecases.ExampleCase.ExampleUsecase import ExampleUsecase
-from fastapi import APIRouter, Depends, Header, Path, Query
+from Presentation.Handlers.ArifyAuthorizer import ArifyAuthorizer
+from Presentation.Handlers.ScopesHandler import ScopesHandler
+from fastapi import APIRouter, Security, Depends, Header, Path, Query
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 import traceback
@@ -21,12 +23,13 @@ Logger.addHandler(console_handler)
 
 # Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/create", response_model=CreateExampleAdapter)
-async def get_user_for_example(
+async def get_user_for_example(    
     request: ExampleRequestAdaper, # Request Body
     customer_id: int = Path(..., title="Customer ID", description="ID único del cliente"),
     include_details: bool = Query(False, title="Include Details", description="Si es True, devuelve más información"),
     auth: str = Header(..., title="Authorization", description="Token de autenticación"),
-    usecase: ExampleUsecase = Depends(ExampleUsecase)  # Inyección de dependencia
+    usecase: ExampleUsecase = Depends(ExampleUsecase),  # Inyección de dependencia
+    secury: dict = Security(ArifyAuthorizer(), scopes=[ScopesHandler.READ])
 ):
     try:
         response: CreateExampleAdapter = await usecase.get_client_async(request)

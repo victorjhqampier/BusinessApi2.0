@@ -20,7 +20,7 @@ class ExampleRequestAdaperValidator (ArifyValidator):
                 .not_empty()
                 .min_length(7)
                 .max_length(30)
-                .with_code("1")
+                .with_code("122")
                 .with_message("Corrija el campo caray")
                 .validate()
         )
