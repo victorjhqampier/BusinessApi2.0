@@ -3,8 +3,8 @@ from fastapi.security import SecurityScopes
 
 class ArifyAuthorizer:
    
-    def __init__(self, header_name: str = "axcope"):     
-        self.header_name = header_name
+    def __init__(self):
+        self.header_name = "axscope"
 
     def __call__(self, security_scopes: SecurityScopes, request: Request) -> dict:
         """
@@ -30,7 +30,7 @@ class ArifyAuthorizer:
         if missing:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Faltan scopes requeridos: {list(missing)}"
+                detail=f"Faltan scopes requeridos para '{self.header_name}'"
             )
 
         return {

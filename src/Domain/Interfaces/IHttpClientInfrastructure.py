@@ -1,42 +1,43 @@
 from abc import ABC, abstractmethod
+from typing import Dict, Optional
 
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 
 class IHttpClientInfrastructure(ABC):
     @abstractmethod
-    def http(self, base_url:str):
+    def http(self, base_url: str) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def endpoint(self, endpoint:str):
+    def endpoint(self, endpoint: str) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def header(self, key:str, value:str):
+    def header(self, key: str, value: str) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def auth(self, key:str, value:str):
+    def authorization(self, key: str, value: str) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def headers(self, headers:dict):
+    def headers(self, headers: Dict[str, str]) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def param(self, key:str, value:str):
+    def param(self, key: str, value: str) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def params(self, params:dict):
+    def params(self, params: Dict[str, str]) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def query(self, key:str, value:str):
+    def query(self, key: str, value: str) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
-    def queries(self, queries:dict):
+    def queries(self, queries: Dict[str, str]) -> "IHttpClientInfrastructure":
         pass
 
     @abstractmethod
@@ -44,9 +45,17 @@ class IHttpClientInfrastructure(ABC):
         pass
 
     @abstractmethod
-    async def post(self, body=None) -> HttpResponseEntity:
+    async def post(self, body: Optional[dict] = None) -> HttpResponseEntity:
         pass
 
     @abstractmethod
-    async def put(self, body=None) -> HttpResponseEntity:
+    async def put(self, body: Optional[dict] = None) -> HttpResponseEntity:
+        pass
+
+    @abstractmethod
+    async def close(self) -> None:
+        """
+        Cierra la conexión interna (AsyncClient o Session).
+        Debe llamarse cuando no se use más la instancia.
+        """
         pass

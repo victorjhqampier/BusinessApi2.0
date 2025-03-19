@@ -1,55 +1,39 @@
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 import httpx
 
-class HttpClientConnector():
-    def __init__(self):
-        self.timeout_sec = 15
+class HttpClientConnector:
+    #*** Mantiene un solo AsyncClient para evitar abrir/cerrar conexiones constantemente.
+    def __init__(self, timeout_sec: int = 15):        
+        self.timeout_sec = timeout_sec
+        self._client = httpx.AsyncClient(timeout=self.timeout_sec)
 
-    async def get_async(self, url:str, params=None, headers=None) -> HttpResponseEntity:   
-        async with httpx.AsyncClient(timeout=self.timeout_sec) as client:            
-            response = await client.get(url, params=params, headers=headers)
-            try:
-                content = response.json()
-            except:
-                content = None
+    #*** Cierra el AsyncClient, liberando recursos de red y sockets
+    async def close(self):        
+        await self._client.aclose()
 
-            return HttpResponseEntity(
-                StatusCode=response.status_code,
-                StatusContent = content is not None,
-                Content=content,
-                Headers=response.headers,
-                Url=str(response.url)
-            )
+    async def get_async(self, url: str, params=None, headers=None) -> HttpResponseEntity:
+        response = await self._client.get(url, params=params, headers=headers)
+        return self._build_response(response)
 
-    async def post_async(self, url:str, data=None, params=None, headers=None) -> HttpResponseEntity:
-        async with httpx.AsyncClient(timeout=self.timeout_sec) as client:            
-            response = await client.post(url, json=data, params=params, headers=headers)
-            try:
-                content = response.json()
-            except:
-                content = None
+    async def post_async(self, url: str, data=None, params=None, headers=None) -> HttpResponseEntity:
+        response = await self._client.post(url, json=data, params=params, headers=headers)
+        return self._build_response(response)
 
-            return HttpResponseEntity(
-                StatusCode=response.status_code,
-                StatusContent = content is not None,
-                Content=content,
-                Headers=response.headers,
-                Url=str(response.url)
-            )
+    async def put_async(self, url: str, data=None, params=None, headers=None) -> HttpResponseEntity:
+        response = await self._client.put(url, json=data, params=params, headers=headers)
+        return self._build_response(response)
 
-    async def put_async(self, url:str, data=None, params=None, headers=None) -> HttpResponseEntity:
-        async with httpx.AsyncClient(timeout=self.timeout_sec) as client:            
-            response = await client.put(url, json=data, params=params, headers=headers)
-            
-            try:
-                content = response.json()
-            except:
-                content = None
+    #*** Convierte un httpx.Response en un HttpResponseEntity
+    def _build_response(self, response: httpx.Response) -> HttpResponseEntity:
+        try:
+            content = response.json()
+        except Exception:
+            content = None
 
-            return HttpResponseEntity(
-                StatusCode=response.status_code,
-                StatusContent = content is not None,
-                Content=content,
-                Headers=response.headers,
-                Url=str(response.url)
-            )
+        return HttpResponseEntity(
+            StatusCode=response.status_code,
+            StatusContent=(content is not None),
+            Content=content,
+            Headers=response.headers,
+            Url=str(response.url),
+        )
