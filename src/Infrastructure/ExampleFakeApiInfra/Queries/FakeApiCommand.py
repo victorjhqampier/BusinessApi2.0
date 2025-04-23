@@ -26,11 +26,11 @@ class FakeApiCommand (IFakeApiInfrastructure):
         
         result:HttpResponseEntity = await self.__builder_api_client.get()
 
-        if result.StatusCode == 500 or not result.Content:
+        if result.StatusCode == 500:
             self.__logger.error(f"[{result.StatusCode}] [{result.Url}] : {str(result.Content)}")
             return None
 
-        if result.StatusCode != 200:
+        if result.StatusCode != 200 or not result.Content:
             self.__logger.warning(f"[{result.StatusCode}] [{result.Url}] - {str(result.Content)}")
             return None
 

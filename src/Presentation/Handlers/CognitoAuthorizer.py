@@ -97,7 +97,7 @@ class CognitoAuthorizer:
             if missing_scopes:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail=f"Faltan scopes requeridos: {', '.join(missing_scopes)}"
+                    detail=f"Not authorized"
                 )
 
             return {
@@ -111,10 +111,11 @@ class CognitoAuthorizer:
             }
 
         except jwt.ExpiredSignatureError:
-            raise HTTPException(
+            raise HTTPArifyException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token expirado",
-                headers={"WWW-Authenticate": "Bearer"}
+                content={
+                    "error": "Token expired"
+                }
             )
         except jwt.JWTError as e:
             raise HTTPException(
@@ -129,22 +130,8 @@ class CognitoAuthorizer:
                 detail="Error al validar el token"
             )
 
-# Ejemplo de uso:
-# cognito_authorizer = CognitoAuthorizer(
-#     user_pool_id="us-east-1_xxxxxxxx",
-#     region="us-east-1"
-# )
-#
-# @app.get("/protected")
-# def protected_route(
-#     token_info: dict = Security(
-#         cognito_authorizer,
-#         scopes=["read:data"]
-#     )
-# ):
-#     return {"message": "Acceso autorizado", "user": token_info} 
-
-
-
-
-
+class HTTPArifyException(Exception):
+    def __init__(self, status_code: int, content: dict):
+        self.status_code = status_code
+        self.content = content
+        super().__init__()
