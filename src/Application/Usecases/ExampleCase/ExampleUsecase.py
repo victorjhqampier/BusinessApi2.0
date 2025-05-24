@@ -4,13 +4,12 @@ from Application.Adpaters.ExampleAdapters.CreateExampleAdapter import CreateExam
 from Application.Adpaters.ExampleAdapters.ExampleRequestAdaper import ExampleRequestAdaper
 from Application.Helpers.EasyBianResponseCoreHelper import EasyBianResponseCoreHelper
 from Application.Usecases.ExampleCase.ExampleValidator import ExampleValidator
-from Domain.Commons.DependencyContainer import get_dependency
-from Domain.Entities.ExampleFakeApi.FakeApiEntity import FakeApiEntity
+from Domain.Commons.CoreServices import CoreServices as Services
 from Domain.Interfaces.IFakeApiInfrastructure import IFakeApiInfrastructure
 
 class ExampleUsecase():
     def __init__(self):
-        self.__fake_api:IFakeApiInfrastructure = get_dependency(IFakeApiInfrastructure)
+        self.__fake_api:IFakeApiInfrastructure = Services.get_dependency(IFakeApiInfrastructure)
         # self.__easy_response= EasyResponseCoreHelper()
         self.__easy_response= EasyBianResponseCoreHelper()
 

@@ -4,8 +4,9 @@ from Application.Interfaces.ILoggerCoreApplication import ILoggerCoreApplication
 from Application.Usecases.InternalCoreCase.AuthServerUsecase import AuthServerUsecase
 from Application.Usecases.InternalCoreCase.LogUsecase import LogUsecase
 from Application.Usecases.NiubizCase.ClientNiubizCase import ClientNiubizCase
-from Domain.Commons.DependencyContainer import register_dependency
-from Infrastructure.CoreInfrastructureSetting import CoreInfrastructureSetting
+from Domain.Commons.CoreServices import CoreServices as Services
+from Infrastructure.ExampleFakeApiInfra.ExampleFakeApiSetting import ExampleFakeApiSetting
+from Infrastructure.HttpClientInfrastrucuture.HttpClientSetting import HttpClientSetting
 
 # ********************************************************************************************************          
 # * Copyright © 2025 Arify Labs - All rights reserved.   
@@ -21,10 +22,19 @@ from Infrastructure.CoreInfrastructureSetting import CoreInfrastructureSetting
 
 class CoreApplicationSetting:
     def __init__(self) -> None:
+        self.__add_infrastructure()
+        self.__add_dependencies()
 
-        # add infrastructure
-        CoreInfrastructureSetting() 
+    def __add_infrastructure(self) -> None:
+        HttpClientSetting.add_services()
+        ExampleFakeApiSetting.add_services()
+        # CoreInfrastructureSetting()        
         
-        register_dependency(ILoggerCoreApplication, LogUsecase)        
-        register_dependency(IAuthServerCoreApplication, AuthServerUsecase)
-        register_dependency(IClientNiubizCaseApplication, ClientNiubizCase)
+    def __add_dependencies(self) -> None:
+        Services.add_singleton_dependency(ILoggerCoreApplication, LogUsecase)        
+        Services.add_singleton_dependency(IAuthServerCoreApplication, AuthServerUsecase)
+        Services.add_singleton_dependency(IClientNiubizCaseApplication, ClientNiubizCase)
+    
+    # ********************************************************************************************************          
+    # * Please not use or added sigleton instance in this layer, only in the infrastructure layer.
+    # ********************************************************************************************************          

@@ -1,11 +1,11 @@
 from Application.Interfaces.ILoggerCoreApplication import ILoggerCoreApplication
-from Domain.Commons.DependencyContainer import get_dependency
+from Domain.Commons.CoreServices import CoreServices as Services
 from Domain.Entities.CoreLoggerEntity import CoreLoggerEntity
 from Domain.Interfaces.ILoggerInfraestructure import ILoggerInfraestructure
 
 class LogUsecase(ILoggerCoreApplication):
     def __init__(self) -> None:                    
-        self.__Mongo:ILoggerInfraestructure = get_dependency(ILoggerInfraestructure)
+        self.__Mongo:ILoggerInfraestructure = Service.get_dependency(ILoggerInfraestructure)
 
     async def open_log(self,cApi:str, cOperation:str, cJsonRequest:str) -> str:
         # Hacer validaciones AQUI

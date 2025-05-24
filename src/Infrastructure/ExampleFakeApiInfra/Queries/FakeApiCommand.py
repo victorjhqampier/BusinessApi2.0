@@ -1,16 +1,15 @@
 from typing import Optional
 from Domain.Entities.ExampleFakeApi.FakeApiEntity import FakeApiEntity
-from Application.Adpaters.GlobalErrorCoreAdapter import GlobalErrorCoreAdapter
-from Domain.Commons.DependencyContainer import get_dependency
 from Domain.Interfaces.IFakeApiInfrastructure import IFakeApiInfrastructure
 from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
-from Infrastructure.ExampleFakeApiInfra.ExampleFakeApiSetting import ExampleFakeApiSetting
+from Infrastructure.ExampleFakeApiInfra.ExampleFakeStartting import _exampleFakeStartting as ExampleFakeStartting
+from Domain.Commons.CoreServices import CoreServices as Services
 import logging
 
 class FakeApiCommand (IFakeApiInfrastructure):
     def __init__(self) -> None:
-        self.__builder_api_client:IHttpClientInfrastructure = get_dependency(IHttpClientInfrastructure)
+        self.__builder_api_client:IHttpClientInfrastructure = Services.get_dependency(IHttpClientInfrastructure)
         
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.__logger.setLevel(logging.DEBUG)
@@ -22,7 +21,7 @@ class FakeApiCommand (IFakeApiInfrastructure):
             self.__logger.addHandler(console_handler)
     
     async def get_user_async(self,id:int) -> Optional[FakeApiEntity]:    
-        self.__builder_api_client.http(ExampleFakeApiSetting.EXAMPLE_HOST_BASE.value).endpoint(f"todos/{id}")
+        self.__builder_api_client.http(ExampleFakeStartting.EXAMPLE_HOST_BASE.value).endpoint(f"todos/{id}")
         
         result:HttpResponseEntity = await self.__builder_api_client.get()
 

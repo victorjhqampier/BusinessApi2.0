@@ -1,8 +1,8 @@
 import base64
 from datetime import datetime, timedelta
+from Domain.Commons.CoreServices import CoreServices as Services
 from Application.Interfaces.IAuthServerCoreApplication import IAuthServerCoreApplication
 from Domain.Commons.AuthServerContainer import get_vars, update_vars
-from Domain.Commons.DependencyContainer import get_dependency
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 from Domain.Interfaces.IAuthServerInfrastructure import IAuthServerInfrastructure
 from Domain.Messages.InternalCoreMessage import InternalCoreMessage
@@ -22,7 +22,7 @@ from Domain.Messages.InternalCoreMessage import InternalCoreMessage
 class AuthServerUsecase(IAuthServerCoreApplication):
     def __init__(self):
         self.__auth_server:dict = get_vars(InternalCoreMessage.COGNITO_NAME_APPCLIENTE_SYSTEM.value)
-        self.__infra:IAuthServerInfrastructure = get_dependency(IAuthServerInfrastructure)
+        self.__infra:IAuthServerInfrastructure = Services.get_dependency(IAuthServerInfrastructure)
     
     async def get_cognito_token(self)->str:
         # Si el token ya expiró

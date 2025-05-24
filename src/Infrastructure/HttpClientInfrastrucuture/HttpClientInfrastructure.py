@@ -2,6 +2,7 @@ from typing import Dict, Optional
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
 from Infrastructure.HttpClientInfrastrucuture.HttpClientConnector import HttpClientConnector
+from Domain.Commons.CoreServices import CoreServices as Services
 
 # ********************************************************************************************************          
 # * Copyright © 2025 Arify Labs - All rights reserved.   
@@ -16,8 +17,8 @@ from Infrastructure.HttpClientInfrastrucuture.HttpClientConnector import HttpCli
 # **********************************************************************************************************
 
 class HttpClientInfrastructure(IHttpClientInfrastructure):
-    def __init__(self, timeout: int = 15):
-        self.__ApiClient: HttpClientConnector = HttpClientConnector(timeout_sec=timeout)
+    def __init__(self):
+        self.__ApiClient: HttpClientConnector = Services.get_instance(HttpClientConnector)
         self.__base_url: str = ''
         self.__endpoint: str = ''
         self.__headers: dict = {}
