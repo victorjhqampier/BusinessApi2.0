@@ -5,6 +5,7 @@ from Application.Adpaters.ExampleAdapters.ExampleRequestAdaper import ExampleReq
 from Application.Helpers.EasyBianResponseCoreHelper import EasyBianResponseCoreHelper
 from Application.Usecases.ExampleCase.ExampleValidator import ExampleValidator
 from Domain.Commons.CoreServices import CoreServices as Services
+from Domain.Interfaces.IExampleKafkaProduInfraestruture import IExampleKafkaProduInfraestruture
 from Domain.Interfaces.IFakeApiInfrastructure import IFakeApiInfrastructure
 
 class ExampleUsecase():
@@ -27,6 +28,10 @@ class ExampleUsecase():
 
         if not result_1 or not result_2 :
             return self.__easy_response.easy_empty_respond(CreateExampleAdapter)
+        
+        # Send to Kafka
+        Kafka = Services.get_dependency(IExampleKafkaProduInfraestruture)
+        Kafka.send_message(result_1.title, result_2.title)
         
         return self.__easy_response.easy_success_respond(CreateExampleAdapter, CreateExampleResponse(
             name=result_1.title,

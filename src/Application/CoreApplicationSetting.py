@@ -7,6 +7,7 @@ from Application.Usecases.NiubizCase.ClientNiubizCase import ClientNiubizCase
 from Domain.Commons.CoreServices import CoreServices as Services
 from Infrastructure.ExampleFakeApiInfra.ExampleFakeApiSetting import ExampleFakeApiSetting
 from Infrastructure.HttpClientInfrastrucuture.HttpClientSetting import HttpClientSetting
+from Infrastructure.KafkaProducerInfrastructure.KafkaProducerSetting import KafkaProducerSetting
 
 # ********************************************************************************************************          
 # * Copyright © 2025 Arify Labs - All rights reserved.   
@@ -28,6 +29,7 @@ class CoreApplicationSetting:
     def __add_infrastructure(self) -> None:
         HttpClientSetting.add_services()
         ExampleFakeApiSetting.add_services()
+        KafkaProducerSetting.add_services()
         # CoreInfrastructureSetting()        
         
     def __add_dependencies(self) -> None:
