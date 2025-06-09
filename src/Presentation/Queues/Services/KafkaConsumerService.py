@@ -5,7 +5,6 @@ import uuid
 from typing import Any, Awaitable, Callable, List, Union, TypeVar, Generic
 from Presentation.Queues.Collections.ExampleTopicCollection import ExampleTopicCollection
 from Presentation.Queues.Services.KafkaConsumerBuilder import KafkaConsumerBuilder
-import logging
 from Presentation.Queues.Services.KafkaConsumerLogger import KafkaConsumerLogger
 from aiokafka import ConsumerRecord
 

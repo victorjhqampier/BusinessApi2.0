@@ -12,7 +12,7 @@ class KafkaConsumerSetting():
                 .with_topic("vcaxi-topic")
                 .with_group_id("Combined Lag")
                 .with_bootstrap_servers("10.5.81.14:9092")
-                .with_handler(ExamExecuteFromKafkaQuery)
+                .with_handler(ExamExecuteFromKafkaQuery.handler)
         ]
     
     async def add_services(self) -> "KafkaConsumerSetting":
