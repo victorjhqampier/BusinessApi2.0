@@ -4,10 +4,10 @@ from pydantic import BaseModel
 
 class CoreLoggerEntity (BaseModel):
     idLogger:str | None = None
-    idPadre:Optional[str]
+    idPadre:str | None 
     cApi:str
     cOperation:str
-    dFechaRequest:datetime = datetime.now()
+    dFechaRequest:datetime 
     cJsonRequest:str
     dFechaResponse:datetime | None
     cJsonResponse:str | None
