@@ -29,8 +29,7 @@ class CoreApplicationSetting:
     def __add_infrastructure(self) -> None:
         HttpClientSetting.add_services()
         ExampleFakeApiSetting.add_services()
-        KafkaProducerSetting.add_services()
-        # CoreInfrastructureSetting()        
+        # KafkaProducerSetting.add_services()         
         
     def __add_dependencies(self) -> None:
         Services.add_singleton_dependency(ILoggerCoreApplication, LogUsecase)        

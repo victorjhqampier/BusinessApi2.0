@@ -2,9 +2,9 @@ from Application.Adpaters.ExampleAdapters.CreateExampleAdapter import CreateExam
 from Application.Adpaters.ExampleAdapters.ExampleRequestAdaper import ExampleRequestAdaper
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
 from Application.Usecases.ExampleCase.ExampleUsecase import ExampleUsecase
-from Presentation.Handlers.ArifyAuthorizer import ArifyAuthorizer
-from Presentation.Handlers.CognitoAuthorizer import CognitoAuthorizer
-from Presentation.Handlers.ScopesHandler import ScopesHandler
+from Presentation.Api.Handlers.ArifyAuthorizer import ArifyAuthorizer
+from Presentation.Api.Handlers.CognitoAuthorizer import CognitoAuthorizer
+from Presentation.Api.Handlers.ScopesHandler import ScopesHandler
 from fastapi import APIRouter, Security, Depends, Header, Path, Query
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
