@@ -1,3 +1,4 @@
+from typing import cast
 from typing import Any, Type, TypeVar
 from Application.Adpaters.Bians.FieldErrorBianCoreAdapter import FieldErrorBianCoreAdapter
 from Application.Adpaters.Bians.ResponseBianCoreAdapter import ResponseBianCoreAdapter
@@ -28,11 +29,11 @@ class EasyBianResponseCoreHelper:
         )
 
     def easy_success_respond(self, _T: Type[T], data_response: Any) -> T:
-        result = _T(
+        result: T = _T(
             statusCode=200
         )
         for prop in _T.__annotations__.keys():
             if prop not in ["statusCode", "errors"]:                
                 setattr(result, prop, data_response)
                 break
-        return result
+        return cast(T, result)

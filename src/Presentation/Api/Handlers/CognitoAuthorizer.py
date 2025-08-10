@@ -73,7 +73,7 @@ class CognitoAuthorizer:
             token_header = jwt.get_unverified_header(token)
             
             # Obtener la llave de firma
-            signing_key = self._get_signing_key(token_header)
+            signing_key: str = self._get_signing_key(token_header)
             
             # Decodificar y validar el token
             payload = jwt.decode(

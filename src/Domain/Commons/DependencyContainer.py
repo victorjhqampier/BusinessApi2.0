@@ -1,3 +1,6 @@
+from typing import Any
+from typing import Callable
+from typing import Union
 from typing import Type
 from functools import wraps
 
@@ -11,7 +14,7 @@ class _dependencyContainer:
         return cls.__instance
 
     @classmethod
-    def register(cls, interface: Type, implementation: Type):
+    def register(cls, interface: Type, implementation: Union[Type, Callable[[], Any]]) -> None:
         """Registra una implementación para una interfaz dada."""
         cls.__dependencies[interface] = implementation 
 

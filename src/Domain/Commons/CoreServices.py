@@ -49,7 +49,7 @@ class CoreServices:
         if instance is None:
             raise ValueError("Instance is NULL")
         
-        class_type = type(instance)
+        class_type: type = type(instance)
         if not isinstance(class_type, type):
             raise ValueError("Class type is not a valid type")
         

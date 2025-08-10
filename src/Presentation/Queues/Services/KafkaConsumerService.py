@@ -99,7 +99,7 @@ class KafkaConsumerService(Generic[T]):
 
     async def _dispatch(self, record: ConsumerRecord) -> None:
         try:
-            message = ExampleTopicCollection(**record.value)
+            message: ExampleTopicCollection = ExampleTopicCollection(**record.value)
             await self.__handler(message)
         except Exception as ex:
             self._logger.error(

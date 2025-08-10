@@ -29,14 +29,14 @@ async def lifespan(app: FastAPI):
     CoreApplicationSetting()
 
     # Add Kafka consumer
-    my_consumers = KafkaConsumerSetting()
-    await my_consumers.add_services()
+    # my_consumers = KafkaConsumerSetting()
+    # await my_consumers.add_services()
     
     try:
         yield
     finally:
-        #pass
-        await my_consumers.stop_services()
+        pass
+        # await my_consumers.stop_services()
 
 app = FastAPI(docs_url="/docs/openapi", redoc_url="/docs/reopenapi", lifespan=lifespan)
 app.title = "Arify Backend Business Layer"

@@ -1,5 +1,5 @@
 from enum import Enum
-class InternalApiMessage(str, Enum):  
+class InternalApiMessage(Enum):  
     _15083 = "No puede ser vacío"
     _15084 = "No puede ser nulo"
     _15085 = "Nombre no es válido"

@@ -20,4 +20,4 @@ class ClientNiubizCase(IClientNiubizCaseApplication):
         if result.errors is not None:
             return self.__easy_response.EasyListErrorRespond(result.errors)
         
-        return self.__easy_response.EasyEmptyRespond(result.errors)
+        return self.__easy_response.EasyEmptyRespond()
