@@ -4,12 +4,12 @@ from typing import Optional
 
 class HttpClientConnector:
     #*** Mantiene un solo AsyncClient para evitar abrir/cerrar conexiones constantemente.
-    def __init__(self, timeout_sec: int = 15):        
+    def __init__(self, timeout_sec: int = 28):        
         self.timeout_sec = timeout_sec
         # Configuración optimizada para conexiones HTTPS
         self._client = httpx.AsyncClient(
             timeout=self.timeout_sec,            
-            http2=True, # Habilitar keep-alive            
+            http2=False, # Habilitar multiplexación      
             verify=True,# Configuración de SSL optimizada            
             limits=httpx.Limits(# Pool de conexiones
                 max_keepalive_connections=5,  # Mantener hasta 5 conexiones vivas
