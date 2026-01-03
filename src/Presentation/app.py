@@ -1,8 +1,9 @@
 from Application.Adpaters.ResponseCoreAdapter import ResponseCoreAdapter
 from Application.CoreApplicationSetting import CoreApplicationSetting
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
-from Presentation.Api.Controllers.ExampleController import ExampleController
-from Presentation.Queues.KafkaConsumerSetting import KafkaConsumerSetting
+from Presentation.BusinessApi.Controllers.ExampleController import ExampleController
+from Presentation.EventListener.FromExternal.KafkaConsumerSetting import KafkaConsumerSetting
+from Presentation.EventListener.FromMemory.MemoryListenerSetting import MemoryListenerSetting
 from fastapi import FastAPI
 import uvicorn
 
@@ -10,14 +11,14 @@ from contextlib import asynccontextmanager
 import asyncio
 
 # ********************************************************************************************************          
-# * Copyright © 2025 Arify Labs - All rights reserved.   
+# * Copyright © 2026 Arify Labs - All rights reserved.   
 # * 
 # * Info                  : Integrator for SaaS.
 # *
 # * By                    : Victor Jhampier Caxi Maquera
 # * Email/Mobile/Phone    : victorjhampier@gmail.com | 968991*14
 # *
-# * Creation date         : 20/10/2024
+# * Creation date         : 01/01/2026
 # * 
 # **********************************************************************************************************
 
@@ -25,6 +26,9 @@ import asyncio
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     
+    # Add Memory listener
+    await MemoryListenerSetting.add_services()
+
     # Add Application layer
     CoreApplicationSetting()
 

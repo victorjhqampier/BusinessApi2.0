@@ -1,7 +1,7 @@
 from Domain.Commons.CoreServices import CoreServices as Services
 from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
-from Infrastructure.HttpClientInfrastrucuture.HttpClientConnector import HttpClientConnector
-from Infrastructure.HttpClientInfrastrucuture.HttpClientInfrastructure import HttpClientInfrastructure
+from Infrastructure.HttpClientHelper.HttpClientConnector import HttpClientConnector
+from Infrastructure.HttpClientHelper.HttpClientInfrastructure import HttpClientInfrastructure
 
 # ********************************************************************************************************          
 # * Copyright © 2025 Arify Labs - All rights reserved.   

@@ -1,7 +1,7 @@
-from Presentation.Queues.Collections.ExampleTopicCollection import ExampleTopicCollection
+from Presentation.EventListener.FromExternal.Collections.ExampleTopicCollection import ExampleTopicCollection
 import time
 
-from Presentation.Queues.Services.KafkaConsumerLogger import KafkaConsumerLogger
+from Presentation.EventListener.FromExternal.Services.KafkaConsumerLogger import KafkaConsumerLogger
 
 class ExamExecuteFromKafkaQuery:
     def __init__(self, event: ExampleTopicCollection) -> None:

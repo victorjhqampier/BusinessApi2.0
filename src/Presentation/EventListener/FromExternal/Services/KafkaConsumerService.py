@@ -3,9 +3,9 @@ import asyncio
 import json
 import uuid
 from typing import Any, Awaitable, Callable, List, Union, TypeVar, Generic
-from Presentation.Queues.Collections.ExampleTopicCollection import ExampleTopicCollection
-from Presentation.Queues.Services.KafkaConsumerBuilder import KafkaConsumerBuilder
-from Presentation.Queues.Services.KafkaConsumerLogger import KafkaConsumerLogger
+from Presentation.EventListener.FromExternal.Collections.ExampleTopicCollection import ExampleTopicCollection
+from Presentation.EventListener.FromExternal.Services.KafkaConsumerBuilder import KafkaConsumerBuilder
+from Presentation.EventListener.FromExternal.Services.KafkaConsumerLogger import KafkaConsumerLogger
 from aiokafka import ConsumerRecord
 
 T = TypeVar('T')

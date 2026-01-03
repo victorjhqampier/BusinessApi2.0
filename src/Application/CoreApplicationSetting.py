@@ -6,7 +6,7 @@ from Application.Usecases.InternalCoreCase.LogUsecase import LogUsecase
 from Application.Usecases.NiubizCase.ClientNiubizCase import ClientNiubizCase
 from Domain.Commons.CoreServices import CoreServices as Services
 from Infrastructure.ExampleFakeApiInfra.ExampleFakeApiSetting import ExampleFakeApiSetting
-from Infrastructure.HttpClientInfrastrucuture.HttpClientSetting import HttpClientSetting
+from Infrastructure.HttpClientHelper.HttpClientSetting import HttpClientSetting
 from Infrastructure.KafkaProducerInfrastructure.KafkaProducerSetting import KafkaProducerSetting
 
 # ********************************************************************************************************          

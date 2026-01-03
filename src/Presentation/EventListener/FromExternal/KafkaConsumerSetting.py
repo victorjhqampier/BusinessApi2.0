@@ -1,8 +1,8 @@
 import asyncio
 
-from Presentation.Queues.Queries.ExamExecuteFromKafkaQuery import ExamExecuteFromKafkaQuery
-from Presentation.Queues.Services.KafkaConsumerService import KafkaConsumerService
-from Presentation.Queues.Collections.ExampleTopicCollection import ExampleTopicCollection
+from Presentation.EventListener.FromExternal.Queries.ExamExecuteFromKafkaQuery import ExamExecuteFromKafkaQuery
+from Presentation.EventListener.FromExternal.Services.KafkaConsumerService import KafkaConsumerService
+from Presentation.EventListener.FromExternal.Collections.ExampleTopicCollection import ExampleTopicCollection
 
 class KafkaConsumerSetting():
 

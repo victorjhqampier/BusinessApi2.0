@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
-from Infrastructure.HttpClientInfrastrucuture.HttpClientConnector import HttpClientConnector
+from Infrastructure.HttpClientHelper.HttpClientConnector import HttpClientConnector
 from Domain.Commons.CoreServices import CoreServices as Services
 
 # ********************************************************************************************************          

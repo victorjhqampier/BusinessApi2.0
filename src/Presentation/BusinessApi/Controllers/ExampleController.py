@@ -2,25 +2,25 @@ from Application.Adpaters.ExampleAdapters.CreateExampleAdapter import CreateExam
 from Application.Adpaters.ExampleAdapters.ExampleRequestAdaper import ExampleRequestAdaper
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
 from Application.Usecases.ExampleCase.ExampleUsecase import ExampleUsecase
-from Presentation.Api.Handlers.ArifyAuthorizer import ArifyAuthorizer
-from Presentation.Api.Handlers.CognitoAuthorizer import CognitoAuthorizer
-from Presentation.Api.Handlers.ScopesHandler import ScopesHandler
+from Presentation.BusinessApi.Handlers.ArifyAuthorizer import ArifyAuthorizer
+from Presentation.BusinessApi.Handlers.CognitoAuthorizer import CognitoAuthorizer
+from Presentation.BusinessApi.Handlers.ScopesHandler import ScopesHandler
+from Domain.Entities.Internals.MicroserviceCallTraceEntity import MicroserviceCallTraceEntity
+from Presentation.BusinessApi.BusinessApiLogger import BusinessApiLogger
+from Domain.Commons.CoreServices import CoreServices as Services
+from Domain.Containers.MemoryEvents.MicroserviceCallMemoryQueue import MicroserviceCallMemoryQueue
+
 from fastapi import APIRouter, Security, Depends, Header, Path, Query
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+from datetime import datetime
+from uuid import uuid4
 import traceback
-import logging
 
 # Get the instance of the EasyResponseCoreHelper class
 EasyResponse = EasyResponseCoreHelper()
 ExampleController = APIRouter(tags=["Example"])
-
-
-# initialize the logger
-Logger = logging.getLogger(__name__)
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s'))
-Logger.addHandler(console_handler)
+_logger = BusinessApiLogger.set_logger().getChild(__name__)
 
 # Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/create", response_model=CreateExampleAdapter)
@@ -30,9 +30,29 @@ async def get_user_for_example(
     include_details: bool = Query(False, title="Include Details", description="Si es True, devuelve más información"),
     auth: str = Header(..., title="Authorization", description="Token de autenticación"),
     usecase: ExampleUsecase = Depends(ExampleUsecase),  # Inyección directa de dependencia
-    _: dict = Security(ArifyAuthorizer(), scopes=[ScopesHandler.READ])
+    #_: dict = Security(ArifyAuthorizer(), scopes=[ScopesHandler.READ])
 ):
+    _container: MicroserviceCallMemoryQueue = Services.get_instance(MicroserviceCallMemoryQueue)
     try:
+        
+        await _container.try_push(MicroserviceCallTraceEntity(
+            Identity="user-983472",
+            TraceId=str(uuid4()),
+            ChannelId="MOBILE",
+            DeviceId="ANDROID-PIXEL-7",
+            Keyword="GetBalance",
+            MicroserviceName="BusinessAPI2.0",
+            OperationName="Transfer.GetBalance.execute",
+            RequestUrl="/business-api/v2/transfer/get-balance",
+            RequestHeader='{"Authorization":"Bearer eyJhbGciOi...","Content-Type":"application/json"}',
+            RequestPayload='{"accountId":"1234567890","currency":"PEN"}',
+            RequestDatetime=datetime.utcnow(),
+            ResponseStatusCode=200,
+            ResponsePayload='{"balance":1520.75,"currency":"PEN"}',
+            ResponseDatetime=datetime.utcnow()
+        ))
+        _logger.info("Este es el codigo:"+str(customer_id) + 10)
+
         response: CreateExampleAdapter = await usecase.get_client_async(request)
 
         return JSONResponse(
@@ -40,12 +60,11 @@ async def get_user_for_example(
             content=jsonable_encoder(response, exclude_none=True)
         )
     
-    except Exception as ex:
-        track:str = traceback.format_exc()
-        Logger.error(track.replace('\n',' ').strip())
+    except:
+        _logger.error(traceback.format_exc().replace('\n',' ').strip())
         return JSONResponse(
             status_code=500,
-            content=jsonable_encoder(EasyResponse.EasyErrorRespond("99","Ocurrió el siguiente error: "+ str(ex)))
+            content=jsonable_encoder(EasyResponse.EasyErrorRespond("99","No es de tu lado, es nuestro error"),exclude_none=True)
         )
 # Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/new/create", response_model=CreateExampleAdapter)
@@ -65,10 +84,9 @@ async def get_user_for_example2(
             content=jsonable_encoder(response, exclude_none=True)
         )
     
-    except Exception as ex:
-        track:str = traceback.format_exc()
-        Logger.error(track.replace('\n',' ').strip())
+    except:
+        _logger.error(traceback.format_exc().replace('\n',' ').strip())
         return JSONResponse(
             status_code=500,
-            content=jsonable_encoder(EasyResponse.EasyErrorRespond("99","Ocurrió el siguiente error: "+ str(ex)))
+            content=jsonable_encoder(EasyResponse.EasyErrorRespond("99","No es de tu lado, es nuestro error"),exclude_none=True)
         )
