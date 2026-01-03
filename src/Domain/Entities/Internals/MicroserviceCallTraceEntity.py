@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class MicroserviceCallTraceEntity (BaseModel):
-    Identity: Optional[str] = None
+    Identity: str
     TraceId: str
     ChannelId: str
     DeviceId:str
@@ -11,7 +11,6 @@ class MicroserviceCallTraceEntity (BaseModel):
     MicroserviceName: str = "BusinessAPI2.0"  # This Project
     OperationName: str  # Transfer.GetBalance.execute
     RequestUrl: str
-    RequestHeader: Optional[str] = None
     RequestPayload: Optional[str] = None
     RequestDatetime: datetime = datetime.now()
     ResponseStatusCode: int = 0

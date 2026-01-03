@@ -8,13 +8,10 @@ from Presentation.BusinessApi.Handlers.ScopesHandler import ScopesHandler
 from Domain.Entities.Internals.MicroserviceCallTraceEntity import MicroserviceCallTraceEntity
 from Presentation.BusinessApi.BusinessApiLogger import BusinessApiLogger
 from Domain.Commons.CoreServices import CoreServices as Services
-from Domain.Containers.MemoryEvents.MicroserviceCallMemoryQueue import MicroserviceCallMemoryQueue
-
-from fastapi import APIRouter, Security, Depends, Header, Path, Query
+from Presentation.BusinessApi.Handlers.MicroserviceTraceHandler import MicroserviceTraceHandler
+from fastapi import APIRouter, Security, Depends, Header, Path, Query, Request
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from datetime import datetime
-from uuid import uuid4
 import traceback
 
 # Get the instance of the EasyResponseCoreHelper class
@@ -24,37 +21,22 @@ _logger = BusinessApiLogger.set_logger().getChild(__name__)
 
 # Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/create", response_model=CreateExampleAdapter)
-async def get_user_for_example(    
-    request: ExampleRequestAdaper, # Request Body
+async def get_user_for_example(
+    http_request: Request,
+    body: ExampleRequestAdaper, # Request Body
     customer_id: int = Path(..., title="Customer ID", description="ID único del cliente"),
     include_details: bool = Query(False, title="Include Details", description="Si es True, devuelve más información"),
     auth: str = Header(..., title="Authorization", description="Token de autenticación"),
     usecase: ExampleUsecase = Depends(ExampleUsecase),  # Inyección directa de dependencia
     #_: dict = Security(ArifyAuthorizer(), scopes=[ScopesHandler.READ])
 ):
-    _container: MicroserviceCallMemoryQueue = Services.get_instance(MicroserviceCallMemoryQueue)
+    _trace_handler: MicroserviceTraceHandler = MicroserviceTraceHandler()
     try:
-        
-        await _container.try_push(MicroserviceCallTraceEntity(
-            Identity="user-983472",
-            TraceId=str(uuid4()),
-            ChannelId="MOBILE",
-            DeviceId="ANDROID-PIXEL-7",
-            Keyword="GetBalance",
-            MicroserviceName="BusinessAPI2.0",
-            OperationName="Transfer.GetBalance.execute",
-            RequestUrl="/business-api/v2/transfer/get-balance",
-            RequestHeader='{"Authorization":"Bearer eyJhbGciOi...","Content-Type":"application/json"}',
-            RequestPayload='{"accountId":"1234567890","currency":"PEN"}',
-            RequestDatetime=datetime.utcnow(),
-            ResponseStatusCode=200,
-            ResponsePayload='{"balance":1520.75,"currency":"PEN"}',
-            ResponseDatetime=datetime.utcnow()
-        ))
-        _logger.info("Este es el codigo:"+str(customer_id) + 10)
+        await _trace_handler.capture_request(request=http_request, operation_name="getuser.forexample", keyword="your_user_id")
 
-        response: CreateExampleAdapter = await usecase.get_client_async(request)
+        response: CreateExampleAdapter = await usecase.get_client_async(body)
 
+        await _trace_handler.capture_response(response=response, status_code=response.statusCode)
         return JSONResponse(
             status_code=response.statusCode,
             content=jsonable_encoder(response, exclude_none=True)
@@ -69,7 +51,7 @@ async def get_user_for_example(
 # Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/new/create", response_model=CreateExampleAdapter)
 async def get_user_for_example2(    
-    request: ExampleRequestAdaper, # Request Body
+    body: ExampleRequestAdaper, # Request Body
     customer_id: int = Path(..., title="Customer ID", description="ID único del cliente"),
     include_details: bool = Query(False, title="Include Details", description="Si es True, devuelve más información"),
     auth: str = Header(..., title="Authorization", description="Token de autenticación"),
@@ -77,7 +59,7 @@ async def get_user_for_example2(
     _: dict = Security(CognitoAuthorizer(), scopes=["openid"])
 ):
     try:
-        response: CreateExampleAdapter = await usecase.get_client_async(request)
+        response: CreateExampleAdapter = await usecase.get_client_async(body)
 
         return JSONResponse(
             status_code=response.statusCode,

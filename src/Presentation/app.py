@@ -6,9 +6,7 @@ from Presentation.EventListener.FromExternal.KafkaConsumerSetting import KafkaCo
 from Presentation.EventListener.FromMemory.MemoryListenerSetting import MemoryListenerSetting
 from fastapi import FastAPI
 import uvicorn
-
 from contextlib import asynccontextmanager
-import asyncio
 
 # ********************************************************************************************************          
 # * Copyright © 2026 Arify Labs - All rights reserved.   
@@ -45,6 +43,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(docs_url="/docs/openapi", redoc_url="/docs/reopenapi", lifespan=lifespan)
 app.title = "Arify Backend Business Layer"
 app.version = "1.0"
+# Add Middlewares
+# app.add_middleware(MicroserviceTraceMiddleware)#, max_body_size=10000)
 
 @app.get("/", response_model=ResponseCoreAdapter)
 def default():
