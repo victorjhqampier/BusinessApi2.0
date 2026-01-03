@@ -62,8 +62,8 @@ class MicroserviceCallMemoryListener:
                     
                     self._logger.warning(f"EVENT>> {event.Identity} REQUEST>> {event.RequestPayload} RESPONSE>> {event.ResponsePayload}")
                     
-        except asyncio.CancelledError:
-            pass
+        # except asyncio.CancelledError:
+        #     pass
         except Exception as e:
             self._logger.error(f"Error en MicroserviceCallMemoryListener: {e}")
-            raise
+            # raise
