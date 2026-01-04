@@ -7,7 +7,7 @@ class MemoryListenerSetting:
     @staticmethod
     async def add_services():
         # Inicializar la cola en memoria
-        Services.add_singleton_instance(MicroserviceCallMemoryQueue(capacity=1000))
+        Services.add_singleton_instance(MicroserviceCallMemoryQueue(capacity=10))
 
         # Inicializar y arrancar el listener
         listener = MicroserviceCallMemoryListener()

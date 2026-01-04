@@ -64,7 +64,8 @@ class MicroserviceTraceHandler:
             ResponseDatetime=datetime.utcnow()
         )
 
-        await self._container.try_push(trace_entity)
+        if not await self._container.try_push(trace_entity):
+            self._logger.error(f"[QUEUE FULL], API: {trace_entity.TraceId} {trace_entity.RequestUrl} {trace_entity.ResponsePayload}")
 
     async def capture_error(self, error: Exception, status_code: int = 500) -> None:        
         error_message = str(error)
@@ -88,4 +89,5 @@ class MicroserviceTraceHandler:
             ResponseDatetime=datetime.utcnow()
         )
 
-        await self._container.try_push(trace_entity)
+        if not await self._container.try_push(trace_entity):
+            self._logger.error(f"[QUEUE FULL], API: {trace_entity.TraceId} {trace_entity.RequestUrl} {trace_entity.ResponsePayload}")

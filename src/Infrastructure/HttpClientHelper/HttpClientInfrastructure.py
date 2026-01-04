@@ -1,3 +1,4 @@
+from Infrastructure.InfrastructureLogger import InfrastructureLogger
 from uuid import uuid4
 from datetime import datetime
 from typing import Dict, Optional, Any
@@ -34,6 +35,7 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
         self.__container: Optional[MicroserviceCallMemoryQueue] = None
         self.__operation_name: str = ''
         self.__start_datetime: datetime = datetime.utcnow()
+        self._logger = InfrastructureLogger.set_logger().getChild(self.__class__.__name__)
 
     def timeout(self, timeout: int) -> "HttpClientInfrastructure":
         # No está en la interfaz, pero es adicional si lo deseas
@@ -197,7 +199,9 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
         )
 
         # Usar try_push para evitar bloqueos
-        await self.__container.try_push(trace_entity)
+        if not await self.__container.try_push(trace_entity):
+            self._logger.error(f"[QUEUE FULL], Trace: {trace_entity.TraceId} {trace_entity.RequestUrl} {trace_entity.ResponsePayload}")
+
     async def _capture_error_trace(self, method: str, body: Optional[dict], error_message: str) -> None:
         if not self.__memory_enabled or self.__container is None:
             return
@@ -220,4 +224,5 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
         )
 
         # Usar try_push para evitar bloqueos
-        await self.__container.try_push(trace_entity)
+        if not await self.__container.try_push(trace_entity):
+            self._logger.error(f"[QUEUE FULL], Trace: {trace_entity.TraceId} {trace_entity.RequestUrl} {trace_entity.ResponsePayload}")
