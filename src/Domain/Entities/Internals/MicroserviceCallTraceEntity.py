@@ -8,6 +8,7 @@ class MicroserviceCallTraceEntity (BaseModel):
     ChannelId: str
     DeviceId:str
     Keyword: Optional[str] = None
+    Method: Optional[str] = None
     MicroserviceName: str = "BusinessAPI2.0"  # This Project
     OperationName: str  # Transfer.GetBalance.execute
     RequestUrl: str

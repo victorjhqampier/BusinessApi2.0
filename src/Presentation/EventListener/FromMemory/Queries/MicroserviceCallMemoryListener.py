@@ -60,7 +60,7 @@ class MicroserviceCallMemoryListener:
                     # use_case = Services.get_instance(ISaveEventUseCase)
                     # await use_case.save_event_async(event)
                     
-                    self._logger.warning(f"EVENT>> {event.Identity} REQUEST>> {event.RequestPayload} RESPONSE>> {event.ResponsePayload}")
+                    self._logger.warning(f"IDENTITY>> {event.Identity} STATUSCODE>> {event.ResponseStatusCode}")
                     
         # except asyncio.CancelledError:
         #     pass

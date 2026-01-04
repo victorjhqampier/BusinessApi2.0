@@ -1,4 +1,9 @@
-from typing import Dict, Optional
+from uuid import uuid4
+from datetime import datetime
+from typing import Dict, Optional, Any
+import json
+from Domain.Entities.Internals.MicroserviceCallTraceEntity import MicroserviceCallTraceEntity
+from Domain.Containers.MemoryEvents.MicroserviceCallMemoryQueue import MicroserviceCallMemoryQueue
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 from Domain.Interfaces.IHttpClientInfrastructure import IHttpClientInfrastructure
 from Infrastructure.HttpClientHelper.HttpClientConnector import HttpClientConnector
@@ -12,7 +17,7 @@ from Domain.Commons.CoreServices import CoreServices as Services
 # * By                    : Victor Jhampier Caxi Maquera
 # * Email/Mobile/Phone    : victorjhampier@gmail.com | 968991*14
 # *
-# * Creation date         : 20/10/2024
+# * Creation date         : 03/01/2026
 # * 
 # **********************************************************************************************************
 
@@ -24,6 +29,11 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
         self.__headers: dict = {}
         self.__params: dict = {}
         self.__query: dict = {}
+        # In memory event - optimized attributes
+        self.__memory_enabled: bool = False
+        self.__container: Optional[MicroserviceCallMemoryQueue] = None
+        self.__operation_name: str = ''
+        self.__keyword: Optional[str] = None
 
     def timeout(self, timeout: int) -> "HttpClientInfrastructure":
         # No está en la interfaz, pero es adicional si lo deseas
@@ -81,31 +91,101 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
     async def get(self) -> HttpResponseEntity:
         self._ensure_default_headers()
         final_url = self._build_final_url()
-        return await self.__ApiClient.get_async(
+        
+        response = await self.__ApiClient.get_async(
             url=final_url, 
             params=self.__params,
             headers=self.__headers
         )
+        
+        # Capturar evento completo (request + response) -----
+        await self._capture_complete_trace("GET", None, response)
+        
+        return response
 
     async def post(self, body: Optional[dict] = None) -> HttpResponseEntity:
         self._ensure_default_headers()
         final_url = self._build_final_url()
-        return await self.__ApiClient.post_async(
+        
+        response = await self.__ApiClient.post_async(
             url=final_url,
             data=body,
             params=self.__params,
             headers=self.__headers
         )
+        
+        # Capturar evento completo (request + response) -----
+        await self._capture_complete_trace("POST", body, response)
+        
+        return response
 
     async def put(self, body: Optional[dict] = None) -> HttpResponseEntity:
         self._ensure_default_headers()
         final_url = self._build_final_url()
-        return await self.__ApiClient.put_async(
+        
+        response = await self.__ApiClient.put_async(
             url=final_url,
             data=body,
             params=self.__params,
             headers=self.__headers
         )
+        
+        # Capturar evento completo (request + response) -----
+        await self._capture_complete_trace("PUT", body, response)
+        
+        return response
 
     async def close(self) -> None:
         await self.__ApiClient.close()
+    
+     # Memory queue functionality - optimized implementation
+    def with_memory_queue(self, queue: MicroserviceCallMemoryQueue, operation_name: str, keyword: Optional[str] = None) -> "HttpClientInfrastructure":
+        self.__memory_enabled = True
+        self.__container = queue
+        self.__operation_name = operation_name
+        self.__keyword = keyword
+        return self
+
+    # Resetea el estado de memory queue para reutilizar la instancia. Útil para optimizar recursos cuando se reutiliza el cliente.
+    def _reset_memory_state(self) -> "HttpClientInfrastructure":
+        self.__memory_enabled = False
+        self.__container = None
+        self.__operation_name = ''
+        self.__keyword = None
+        self.__identity = ''
+        return self
+   
+    def _serialize_payload(self, payload: Any) -> Optional[str]:
+        if payload is None:
+            return None
+        
+        try:
+            if isinstance(payload, (dict, list)):
+                return json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
+            return str(payload)
+        except (TypeError, ValueError):
+            return str(payload)
+
+    async def _capture_complete_trace(self, method: str, body: Optional[dict], response: HttpResponseEntity) -> None:
+        if not self.__memory_enabled or self.__container is None:
+            return
+
+        trace_entity = MicroserviceCallTraceEntity(
+            Identity=str(uuid4()),
+            TraceId=self.__headers.get("message-identification", ""),
+            ChannelId=self.__headers.get("channel-identification", ""),
+            DeviceId=self.__headers.get("device-identification", ""),
+            Keyword=self.__keyword or "",
+            Method=method,
+            MicroserviceName="BusinessAPI2.0",
+            OperationName=self.__operation_name,
+            RequestUrl=self._build_final_url(),
+            RequestPayload=self._serialize_payload(body),
+            RequestDatetime=datetime.utcnow(),
+            ResponseStatusCode=response.StatusCode,
+            ResponsePayload=self._serialize_payload(response.Content),
+            ResponseDatetime=datetime.utcnow()
+        )
+
+        # Usar try_push para evitar bloqueos
+        await self.__container.try_push(trace_entity)

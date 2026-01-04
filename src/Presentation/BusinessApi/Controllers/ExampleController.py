@@ -30,13 +30,13 @@ async def get_user_for_example(
     usecase: ExampleUsecase = Depends(ExampleUsecase),  # Inyección directa de dependencia
     #_: dict = Security(ArifyAuthorizer(), scopes=[ScopesHandler.READ])
 ):
-    _trace_handler: MicroserviceTraceHandler = MicroserviceTraceHandler()
+    _easy_trace_handler: MicroserviceTraceHandler = MicroserviceTraceHandler()
     try:
-        await _trace_handler.capture_request(request=http_request, operation_name="getuser.forexample", keyword="your_user_id")
+        await _easy_trace_handler.capture_request(request=http_request, operation_name="getuser.forexample", keyword="your_user_id")
 
         response: CreateExampleAdapter = await usecase.get_client_async(body)
 
-        await _trace_handler.capture_response(response=response, status_code=response.statusCode)
+        await _easy_trace_handler.capture_response(response=response, status_code=response.statusCode)
         return JSONResponse(
             status_code=response.statusCode,
             content=jsonable_encoder(response, exclude_none=True)

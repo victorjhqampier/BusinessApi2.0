@@ -1,3 +1,4 @@
+from Domain.Containers.MemoryEvents.MicroserviceCallMemoryQueue import MicroserviceCallMemoryQueue
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
 
@@ -58,4 +59,8 @@ class IHttpClientInfrastructure(ABC):
         Cierra la conexión interna (AsyncClient o Session).
         Debe llamarse cuando no se use más la instancia.
         """
+        pass
+
+    @abstractmethod
+    def with_memory_queue(self, container: MicroserviceCallMemoryQueue, operation_name: str, keyword:str = None) -> "IHttpClientInfrastructure":
         pass

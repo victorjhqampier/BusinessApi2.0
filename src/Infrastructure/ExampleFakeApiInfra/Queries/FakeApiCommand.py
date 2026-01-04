@@ -1,3 +1,4 @@
+from Domain.Containers.MemoryEvents.MicroserviceCallMemoryQueue import MicroserviceCallMemoryQueue
 from typing import Optional
 from Domain.Entities.ExampleFakeApi.FakeApiEntity import FakeApiEntity
 from Domain.Interfaces.IFakeApiInfrastructure import IFakeApiInfrastructure
@@ -11,9 +12,15 @@ class FakeApiCommand (IFakeApiInfrastructure):
     def __init__(self) -> None:
         self.__builder_api_client:IHttpClientInfrastructure = Services.get_dependency(IHttpClientInfrastructure)        
         self._logger = InfrastructureLogger.set_logger().getChild(self.__class__.__name__)
+        self._container: MicroserviceCallMemoryQueue = Services.get_instance(MicroserviceCallMemoryQueue)
     
     async def get_user_async(self,id:int) -> Optional[FakeApiEntity]:    
-        self.__builder_api_client.http(ExampleFakeStartting.EXAMPLE_HOST_BASE.value).endpoint(f"todos/{id}")
+        (
+            self.__builder_api_client
+            .http(ExampleFakeStartting.EXAMPLE_HOST_BASE.value)
+            .endpoint(f"todos/{id}")
+            .with_memory_queue(self._container, "FakeApiCommand.get_user_async", keyword="my_user_id") # Solo con esto debes dejar traza
+        )
         
         result:HttpResponseEntity = await self.__builder_api_client.get()
 
