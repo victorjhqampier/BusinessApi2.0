@@ -19,7 +19,6 @@ EasyResponse = EasyResponseCoreHelper()
 ExampleController = APIRouter(tags=["Example"])
 _logger = BusinessApiLogger.set_logger().getChild(__name__)
 
-# Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/create", response_model=CreateExampleAdapter)
 async def get_user_for_example(
     http_request: Request,
@@ -30,24 +29,37 @@ async def get_user_for_example(
     usecase: ExampleUsecase = Depends(ExampleUsecase),  # Inyección directa de dependencia
     #_: dict = Security(ArifyAuthorizer(), scopes=[ScopesHandler.READ])
 ):
-    _easy_trace_handler: MicroserviceTraceHandler = MicroserviceTraceHandler()
+    # Inicializar trace handler con request info
+    _easy_trace_handler = MicroserviceTraceHandler(
+        request=http_request, 
+        operation_name="getuser.forexample", 
+        keyword="your_user_id"
+    )
+    
     try:
-        await _easy_trace_handler.capture_request(request=http_request, operation_name="getuser.forexample", keyword="your_user_id")
-
+        # Inicializar body del request
+        await _easy_trace_handler.initialize_request_body(http_request)
+        
         response: CreateExampleAdapter = await usecase.get_client_async(body)
 
-        await _easy_trace_handler.capture_response(response=response, status_code=response.statusCode)
+        # Capturar todo en una sola operación
+        await _easy_trace_handler.capture_all(response=response, status_code=response.statusCode)
+        
         return JSONResponse(
             status_code=response.statusCode,
             content=jsonable_encoder(response, exclude_none=True)
         )
     
-    except:
+    except Exception as e:        
         _logger.error(traceback.format_exc().replace('\n',' ').strip())
+        # Capturar error
+        await _easy_trace_handler.capture_error(error=e)
         return JSONResponse(
             status_code=500,
             content=jsonable_encoder(EasyResponse.EasyErrorRespond("99","No es de tu lado, es nuestro error"),exclude_none=True)
         )
+
+
 # Create a route for the get_user_for_example method
 @ExampleController.post("/{customer_id}/new/create", response_model=CreateExampleAdapter)
 async def get_user_for_example2(    

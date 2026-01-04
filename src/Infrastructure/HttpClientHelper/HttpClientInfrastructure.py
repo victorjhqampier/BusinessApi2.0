@@ -33,7 +33,7 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
         self.__memory_enabled: bool = False
         self.__container: Optional[MicroserviceCallMemoryQueue] = None
         self.__operation_name: str = ''
-        self.__keyword: Optional[str] = None
+        self.__start_datetime: datetime = datetime.utcnow()
 
     def timeout(self, timeout: int) -> "HttpClientInfrastructure":
         # No está en la interfaz, pero es adicional si lo deseas
@@ -190,7 +190,7 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
             OperationName=self.__operation_name,
             RequestUrl=self._build_final_url(),
             RequestPayload=self._serialize_payload(body),
-            RequestDatetime=datetime.utcnow(),
+            RequestDatetime=self.__start_datetime,
             ResponseStatusCode=response.StatusCode,
             ResponsePayload=self._serialize_payload(response.Content),
             ResponseDatetime=datetime.utcnow()
@@ -213,7 +213,7 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
             OperationName=self.__operation_name,
             RequestUrl=self._build_final_url(),
             RequestPayload=self._serialize_payload(body),
-            RequestDatetime=datetime.utcnow(),
+            RequestDatetime=self.__start_datetime,
             ResponseStatusCode=408,  # Timeout o error de conexión
             ResponsePayload=f"ERROR: {error_message}",
             ResponseDatetime=datetime.utcnow()
