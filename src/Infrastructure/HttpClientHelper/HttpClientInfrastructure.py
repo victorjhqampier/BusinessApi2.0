@@ -92,48 +92,57 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
         self._ensure_default_headers()
         final_url = self._build_final_url()
         
-        response = await self.__ApiClient.get_async(
-            url=final_url, 
-            params=self.__params,
-            headers=self.__headers
-        )
-        
-        # Capturar evento completo (request + response) -----
-        await self._capture_complete_trace("GET", None, response)
-        
-        return response
+        try:
+            response = await self.__ApiClient.get_async(
+                url=final_url, 
+                params=self.__params,
+                headers=self.__headers
+            )
+            # Capturar evento completo (request + response)
+            await self._capture_complete_trace("GET", None, response)
+            return response
+        except Exception as e:
+            # Capturar traza de error
+            await self._capture_error_trace("GET", None, str(e))
+            raise  # Re-lanzar la excepción
 
     async def post(self, body: Optional[dict] = None) -> HttpResponseEntity:
         self._ensure_default_headers()
         final_url = self._build_final_url()
         
-        response = await self.__ApiClient.post_async(
-            url=final_url,
-            data=body,
-            params=self.__params,
-            headers=self.__headers
-        )
-        
-        # Capturar evento completo (request + response) -----
-        await self._capture_complete_trace("POST", body, response)
-        
-        return response
+        try:
+            response = await self.__ApiClient.post_async(
+                url=final_url,
+                data=body,
+                params=self.__params,
+                headers=self.__headers
+            )
+            # Capturar evento completo (request + response)
+            await self._capture_complete_trace("POST", body, response)
+            return response
+        except Exception as e:
+            # Capturar traza de error
+            await self._capture_error_trace("POST", body, str(e))
+            raise  # Re-lanzar la excepción
 
     async def put(self, body: Optional[dict] = None) -> HttpResponseEntity:
         self._ensure_default_headers()
         final_url = self._build_final_url()
         
-        response = await self.__ApiClient.put_async(
-            url=final_url,
-            data=body,
-            params=self.__params,
-            headers=self.__headers
-        )
-        
-        # Capturar evento completo (request + response) -----
-        await self._capture_complete_trace("PUT", body, response)
-        
-        return response
+        try:
+            response = await self.__ApiClient.put_async(
+                url=final_url,
+                data=body,
+                params=self.__params,
+                headers=self.__headers
+            )
+            # Capturar evento completo (request + response)
+            await self._capture_complete_trace("PUT", body, response)
+            return response
+        except Exception as e:
+            # Capturar traza de error
+            await self._capture_error_trace("PUT", body, str(e))
+            raise  # Re-lanzar la excepción
 
     async def close(self) -> None:
         await self.__ApiClient.close()
@@ -184,6 +193,29 @@ class HttpClientInfrastructure(IHttpClientInfrastructure):
             RequestDatetime=datetime.utcnow(),
             ResponseStatusCode=response.StatusCode,
             ResponsePayload=self._serialize_payload(response.Content),
+            ResponseDatetime=datetime.utcnow()
+        )
+
+        # Usar try_push para evitar bloqueos
+        await self.__container.try_push(trace_entity)
+    async def _capture_error_trace(self, method: str, body: Optional[dict], error_message: str) -> None:
+        if not self.__memory_enabled or self.__container is None:
+            return
+
+        trace_entity = MicroserviceCallTraceEntity(
+            Identity=str(uuid4()),
+            TraceId=self.__headers.get("message-identification", ""),
+            ChannelId=self.__headers.get("channel-identification", ""),
+            DeviceId=self.__headers.get("device-identification", ""),
+            Keyword=self.__keyword or "",
+            Method=method,
+            MicroserviceName="BusinessAPI2.0",
+            OperationName=self.__operation_name,
+            RequestUrl=self._build_final_url(),
+            RequestPayload=self._serialize_payload(body),
+            RequestDatetime=datetime.utcnow(),
+            ResponseStatusCode=408,  # Timeout o error de conexión
+            ResponsePayload=f"ERROR: {error_message}",
             ResponseDatetime=datetime.utcnow()
         )
 

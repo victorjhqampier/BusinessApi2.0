@@ -29,14 +29,12 @@ class MicroserviceCallMemoryQueue:
     async def push_async(self, item: MicroserviceCallTraceEntity, timeout: Optional[float] = 3.0) -> bool:        
         if self._completed:
             return False
-        # Es necesario usar try catch? pude ser muy caro
+        
         try:
             await asyncio.wait_for(self._queue.put(item), timeout=timeout)
             self._increment_length()
             return True
-        # except asyncio.TimeoutError:
-        #     return False
-        except Exception:
+        except asyncio.TimeoutError:
             return False
 
     # Intenta añadir un elemento sin bloquear, Usar esto cuando no se quiera esperar. Riesgo de pérdida de datos
@@ -50,23 +48,19 @@ class MicroserviceCallMemoryQueue:
             return True
         except asyncio.QueueFull:
             return False
-        except Exception:
-            return False
     
     # ---- Dequeue (una unidad)
     # Extrae un elemento de la cola de forma asíncrona
     async def pop_async(self, timeout: Optional[float] = None) -> Optional[MicroserviceCallTraceEntity]:        
+        if self._completed and self._queue.empty():
+            return None
+            
         try:
-            if self._completed and self._queue.empty():
-                return None
-                
             item = await asyncio.wait_for(self._queue.get(), timeout=timeout)
             self._decrement_length()
             self._queue.task_done()
             return item
         except asyncio.TimeoutError:
-            return None
-        except Exception:
             return None
 
     # Intenta extraer un elemento sin bloquear
@@ -77,8 +71,6 @@ class MicroserviceCallMemoryQueue:
             self._queue.task_done()
             return item
         except asyncio.QueueEmpty:
-            return None
-        except Exception:
             return None
 
     # ---- Consumo continuo (para BackgroundTask)

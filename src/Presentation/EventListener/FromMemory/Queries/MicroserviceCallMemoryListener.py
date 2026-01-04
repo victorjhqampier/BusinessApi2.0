@@ -1,3 +1,4 @@
+import random
 import asyncio
 import logging
 from Domain.Commons.CoreServices import CoreServices as Services
@@ -47,23 +48,25 @@ class MicroserviceCallMemoryListener:
     # LLamar aqui a los casos de uso para procesar los eventos
     # Método principal equivalente a ExecuteAsync de BackgroundService en C#.
     async def _execute_async(self) -> None:
-        try:
-            while self._is_running:
-                # Leer eventos de la cola de manera continua
-                event = await self._container.pop_async(timeout=1.0)
+        while self._is_running:
+            try:
+                # Leer eventos de la cola en lotes (mejor práctica)
+                events = await self._container.read_all_async(batch_size=10, timeout=1.0)
                 
-                if event is not None:
-                    # Aquí debe llamar a un caso de uso para procesar el evento
-                    # ***** public Task SaveEventAsync(MicroserviceApiEventEntity microserviceEvent) ****
+                if events:
+                    # Procesar cada evento del lote
+                    for event in events:
+                        # Aquí debe llamar a un caso de uso para procesar el evento
+                        # ***** public Task SaveEventAsync(MicroserviceApiEventEntity microserviceEvent) ****
+                        
+                        # TODO: Implementar llamada al caso de uso
+                        # use_case = Services.get_instance(ISaveEventUseCase)
+                        # await use_case.save_event_async(event)
+
+                        await asyncio.sleep(random.randint(0, 3))
+                        
+                        self._logger.warning(f"IDENTITY>> {event.Identity} STATUSCODE>> {event.ResponseStatusCode}")
                     
-                    # TODO: Implementar llamada al caso de uso
-                    # use_case = Services.get_instance(ISaveEventUseCase)
-                    # await use_case.save_event_async(event)
-                    
-                    self._logger.warning(f"IDENTITY>> {event.Identity} STATUSCODE>> {event.ResponseStatusCode}")
-                    
-        # except asyncio.CancelledError:
-        #     pass
-        except Exception as e:
-            self._logger.error(f"Error en MicroserviceCallMemoryListener: {e}")
-            # raise
+            except Exception as e:
+                self._logger.error(f"Error procesando eventos: {e}")
+                # Continuar el loop en caso de error
