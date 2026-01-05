@@ -63,7 +63,7 @@ class MicroserviceCallMemoryListener:
                         # use_case = Services.get_instance(ISaveEventUseCase)
                         # await use_case.save_event_async(event)
 
-                        await asyncio.sleep(random.randint(0, 3))
+                        await asyncio.sleep(random.randint(0, 2))
                         
                         self._logger.warning(f"IDENTITY>> {event.Identity} START>> {event.RequestDatetime} END>> {event.ResponseDatetime}")
                     
