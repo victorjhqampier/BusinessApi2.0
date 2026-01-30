@@ -1,9 +1,9 @@
-from Application.Interfaces.ILoggerCoreApplication import ILoggerCoreApplication
+from Application.Ports.ILoggerCorePort import ILoggerCorePort
 from Domain.Commons.CoreServices import CoreServices as Services
 from Domain.Entities.CoreLoggerEntity import CoreLoggerEntity
 from Domain.Interfaces.ILoggerInfraestructure import ILoggerInfraestructure
 
-class LogUsecase(ILoggerCoreApplication):
+class LogUsecase(ILoggerCorePort):
     def __init__(self) -> None:                    
         self.__Mongo:ILoggerInfraestructure = Service.get_dependency(ILoggerInfraestructure)
 

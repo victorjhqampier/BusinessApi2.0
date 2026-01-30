@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from Domain.Entities.CoreLoggerEntity import CoreLoggerEntity
 
-class ILoggerCoreApplication(ABC):
+class ILoggerCorePort(ABC):
     
     @abstractmethod
     async def open_log(self,cApi:str, cOperation:str, cJsonRequest:str) -> str:

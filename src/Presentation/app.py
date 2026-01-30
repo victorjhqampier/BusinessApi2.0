@@ -1,8 +1,9 @@
+from Presentation.BusinessApi.Controllers.NonBianExample.NoBianExampleController import NoBianExampleController
 from Application.Adpaters.ResponseCoreAdapter import ResponseCoreAdapter
 from Application.CoreApplicationSetting import CoreApplicationSetting
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
-from Presentation.BusinessApi.Controllers.ExampleController import ExampleController
-from Presentation.EventListener.FromExternal.KafkaConsumerSetting import KafkaConsumerSetting
+from Presentation.BusinessApi.Controllers.BianExample.BianExampleController import BianExampleController
+# from Presentation.EventListener.FromExternal.KafkaConsumerSetting import KafkaConsumerSetting
 from Presentation.EventListener.FromMemory.MemoryListenerSetting import MemoryListenerSetting
 from fastapi import FastAPI
 import uvicorn
@@ -47,16 +48,17 @@ app.version = "1.0"
 # app.add_middleware(MicroserviceTraceMiddleware)#, max_body_size=10000)
 
 @app.get("/", response_model=ResponseCoreAdapter)
-def default():
+def default() -> ResponseCoreAdapter:
     EasyResponse = EasyResponseCoreHelper()
     return EasyResponse.EasySuccessRespond( {"Info":"Arify Labs All rights reserved" })
 
 @app.get("/health")
-async def health():
+async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 # Add Example APIs
-app.include_router(ExampleController, prefix="/example-service-b/v1")
+app.include_router(BianExampleController, prefix="/example-service-b/v1")
+app.include_router(NoBianExampleController, prefix="/example-service-b/v2")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0")

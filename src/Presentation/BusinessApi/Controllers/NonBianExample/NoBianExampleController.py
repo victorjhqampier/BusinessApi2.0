@@ -1,3 +1,4 @@
+from Presentation.BusinessApi.BusinessApiLogger import BusinessApiLogger
 from Application.Adpaters.ResponseCoreAdapter import ResponseCoreAdapter
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
 from fastapi import APIRouter
@@ -7,17 +8,14 @@ import traceback
 import logging
 
 EasyResponse = EasyResponseCoreHelper()
-ExampleNoBianController = APIRouter(tags=["ExampleNoBian"])
+NoBianExampleController = APIRouter(tags=["ExampleNoBian"])
 
-Logger = logging.getLogger(__name__)
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s'))
-Logger.addHandler(console_handler)
+Logger: Logger = BusinessApiLogger.set_logger().getChild(__name__)
 
-@ExampleNoBianController.get("/",response_model=ResponseCoreAdapter)
-async def get_chain():
+@NoBianExampleController.get("/",response_model=ResponseCoreAdapter)
+async def get_example() -> JSONResponse:
     try:
-        data = {"hola":"date"}
+        data: dict[str, str] = {"hola":"date"}
         return JSONResponse(
             status_code=200,
             content=jsonable_encoder(data,exclude_none=True)
@@ -31,10 +29,10 @@ async def get_chain():
             content=jsonable_encoder(EasyResponse.EasyErrorRespond("99","Ocurrió el siguiente error: "+ str(ex)))
         )
     
-@ExampleNoBianController.post("/",response_model=ResponseCoreAdapter)
-async def mine_chain():
+@NoBianExampleController.post("/",response_model=ResponseCoreAdapter)
+async def push_example() ->JSONResponse:
     try:
-        data = {"hola":"date"}
+        data: dict[str, str] = {"hola":"date"}
         return JSONResponse(
             status_code=200,
             content=jsonable_encoder(data,exclude_none=True)

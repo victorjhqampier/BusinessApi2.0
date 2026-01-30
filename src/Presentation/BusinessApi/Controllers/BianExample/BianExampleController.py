@@ -1,3 +1,4 @@
+from Presentation.BusinessApi.Controllers.NonBianExample.NoBianExampleController import Logger
 from Application.Adpaters.ExampleAdapters.CreateExampleAdapter import CreateExampleAdapter
 from Application.Adpaters.ExampleAdapters.ExampleRequestAdaper import ExampleRequestAdaper
 from Application.Helpers.EasyResponseCoreHelper import EasyResponseCoreHelper
@@ -13,13 +14,14 @@ from fastapi import APIRouter, Security, Depends, Header, Path, Query, Request
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 import traceback
+import logging
 
 # Get the instance of the EasyResponseCoreHelper class
 EasyResponse = EasyResponseCoreHelper()
-ExampleController = APIRouter(tags=["Example"])
-_logger = BusinessApiLogger.set_logger().getChild(__name__)
+BianExampleController = APIRouter(tags=["Example"])
+_logger: Logger = BusinessApiLogger.set_logger().getChild(__name__)
 
-@ExampleController.post("/{customer_id}/create", response_model=CreateExampleAdapter)
+@BianExampleController.post("/{customer_id}/create", response_model=CreateExampleAdapter)
 async def get_user_for_example(
     http_request: Request,
     body: ExampleRequestAdaper, # Request Body
@@ -61,7 +63,7 @@ async def get_user_for_example(
 
 
 # Create a route for the get_user_for_example method
-@ExampleController.post("/{customer_id}/new/create", response_model=CreateExampleAdapter)
+@BianExampleController.post("/{customer_id}/new/create", response_model=CreateExampleAdapter)
 async def get_user_for_example2(    
     body: ExampleRequestAdaper, # Request Body
     customer_id: int = Path(..., title="Customer ID", description="ID único del cliente"),

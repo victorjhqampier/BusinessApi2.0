@@ -2,7 +2,7 @@ from typing import Any
 import base64
 from datetime import datetime, timedelta
 from Domain.Commons.CoreServices import CoreServices as Services
-from Application.Interfaces.IAuthServerCoreApplication import IAuthServerCoreApplication
+from Application.Ports.IAuthServerCorePort import IAuthServerCorePort
 from Domain.Commons.AuthServerContainer import get_vars, update_vars
 from Domain.Entities.HttpResponseEntity import HttpResponseEntity
 from Domain.Interfaces.IAuthServerInfrastructure import IAuthServerInfrastructure
@@ -20,7 +20,7 @@ from Domain.Messages.InternalCoreMessage import InternalCoreMessage
 # * 
 # **********************************************************************************************************
 
-class AuthServerUsecase(IAuthServerCoreApplication):
+class AuthServerUsecase(IAuthServerCorePort):
     def __init__(self) -> None:
         self.__auth_server:dict = get_vars(InternalCoreMessage.COGNITO_NAME_APPCLIENTE_SYSTEM.value)
         self.__infra:IAuthServerInfrastructure = Services.get_dependency(IAuthServerInfrastructure)
