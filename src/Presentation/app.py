@@ -57,8 +57,8 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 # Add Example APIs
-app.include_router(BianExampleController, prefix="/example-service-b/v1")
-app.include_router(NoBianExampleController, prefix="/example-service-b/v2")
+app.include_router(BianExampleController().ApiRouter, prefix="/example-service-b/v1")
+app.include_router(NoBianExampleController().ApiRouter, prefix="/example-service-b/v2")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0")
